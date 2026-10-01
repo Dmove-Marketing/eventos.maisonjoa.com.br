@@ -6,6 +6,7 @@ import Img from '../components/ui/Img.astro';
 import LeadForm from '../components/forms/LeadForm.astro';
 import StaticMap from '../components/ui/StaticMap.astro';
 import WhatsAppWidget from '../components/ui/WhatsAppWidget.astro';
+import { tipoEventoOptions } from '../scripts/lead-payload';
 import '../styles/maison-joa-corporativo.css';
 
 
@@ -138,6 +139,8 @@ const leadFields: any[] = [
   { name: 'Empresa',           type: 'text',     placeholder: 'Nome da empresa',    required: true,  full: true, autocomplete: 'organization' },
   { name: 'Telefone',          type: 'tel',      placeholder: 'WhatsApp',           required: true,  mask: 'phone' },
   { name: 'E-mail',            type: 'email',    placeholder: 'E-mail corporativo', required: true  },
+  { name: 'Tipo de evento',    type: 'select',   placeholder: '',                   required: true,  full: true,
+    options: [{ value: '', label: 'Tipo de evento', disabled: true, selected: true }, ...tipoEventoOptions] },
   { name: 'Data do evento',    type: 'date',     placeholder: 'Data prevista',      required: true },
   { name: 'Número de pessoas', type: 'number',   placeholder: 'Nº de convidados',   required: true, min: '1' },
 ];
@@ -433,7 +436,6 @@ const leadFields: any[] = [
 <WhatsAppWidget
   showEmpresaField={true}
   pageSource="Landing page/eventos-corporativos"
-  tipoEventoFixo="Corporativo"
 />
 
 <!-- Lightbox do mosaico de ambientes -->
