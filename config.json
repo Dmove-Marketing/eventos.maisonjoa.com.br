@@ -27,7 +27,7 @@
   "whatsapp": {
     "phone": "5521990758595",
     "display_name": "Maison Joá",
-    "avatar": ""
+    "avatar": "/apple-touch-icon.png"
   },
   "deploy": {
     "remote_path": "/var/www/eventos.maisonjoa.com.br",
