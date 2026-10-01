@@ -1,0 +1,92 @@
+---
+// src/layouts/Base.astro
+import '../styles/global.css';
+import GTMHead from '../components/tracking/GTMHead.astro';
+import GTMBody from '../components/tracking/GTMBody.astro';
+import UTMCapture from '../components/tracking/UTMCapture.astro';
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+  noIndex?: boolean;
+  theme?: 'dark' | 'light';
+  jsonLd?: Record<string, any>;
+}
+
+const {
+  title,
+  description = '',
+  ogImage = '/images/og-default.jpg',
+  canonical,
+  noIndex = false,
+  theme = 'dark',
+  jsonLd,
+} = Astro.props;
+
+import config from '../../config.json';
+const gtmId          = config.tracking?.gtm_id || '';
+const trackingEnabled = config.tracking?.enabled !== false;
+
+const defaultJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  description: description,
+  url: canonical || Astro.url.href,
+};
+---
+
+<!doctype html>
+<html lang="pt-BR" data-theme={theme}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- SEO -->
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Fonts — Giorgio + Gotham (locais) -->
+    <link rel="preload" href="/fonts/Giorgio.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/Giorgio-Thin.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/Gotham-Book.otf" as="font" type="font/otf" crossorigin />
+
+    <!-- GTM Head -->
+    {trackingEnabled && gtmId && <GTMHead gtmId={gtmId} />}
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd || defaultJsonLd)} />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <!-- GTM Body noscript -->
+    {trackingEnabled && gtmId && <GTMBody gtmId={gtmId} />}
+
+    <!-- UTM Capture -->
+    {trackingEnabled && <UTMCapture />}
+
+    <!-- Conteúdo da página -->
+    <slot />
+
+    <!-- Scripts adicionais -->
+    <slot name="scripts" />
+  </body>
+</html>

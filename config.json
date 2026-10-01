@@ -1,0 +1,32 @@
+{
+  "project_name": "maison-joa",
+  "project_slug": "maison-joa",
+  "client": "Maison Joá",
+  "environment": "production",
+  "tracking": {
+    "gtm_id": "",
+    "enabled": true
+  },
+  "forms": {
+    "lead-form": {
+      "id": "lead-form",
+      "redirect_on_success": "",
+      "webhooks": [
+        "https://server3n8n.dmove.com.br/webhook/maison-joa"
+      ],
+      "fields_required": [
+        "Nome",
+        "Empresa",
+        "Telefone",
+        "E-mail",
+        "Data do evento",
+        "Número de pessoas"
+      ]
+    }
+  },
+  "deploy": {
+    "remote_path": "/var/www/eventos.maisonjoa.com.br",
+    "server": "157.173.197.116",
+    "user": "root"
+  }
+}

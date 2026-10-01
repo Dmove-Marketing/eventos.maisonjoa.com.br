@@ -1,0 +1,78 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  /** true = eager + fetchpriority high (use na imagem LCP/hero) */
+  priority?: boolean;
+  /** força o modo de carregamento (ex.: 'eager' em carrosséis com overflow oculto) */
+  loading?: 'eager' | 'lazy';
+  quality?: number;
+  class?: string;
+  style?: string;
+}
+
+const {
+  src,
+  alt,
+  width = 1200,
+  height,
+  priority = false,
+  loading,
+  quality = 80,
+  class: className,
+  style,
+} = Astro.props;
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/**/*.{jpg,jpeg,png,webp,avif,gif}',
+  { eager: true }
+);
+
+const isExternal = src.startsWith('http://') || src.startsWith('https://');
+const key = `/src/assets/images/${src}`;
+const mod = !isExternal ? images[key] : undefined;
+
+if (!isExternal && !mod) {
+  console.warn(`[Img] imagem não encontrada: ${key}`);
+}
+---
+
+{isExternal ? (
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height ?? undefined}
+    loading={loading ?? (priority ? 'eager' : 'lazy')}
+    fetchpriority={priority ? 'high' : undefined}
+    class={className}
+    style={style}
+  />
+) : mod ? (
+  <Image
+    src={mod.default}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading ?? (priority ? 'eager' : 'lazy')}
+    fetchpriority={priority ? 'high' : undefined}
+    quality={quality}
+    class={className}
+    style={style}
+  />
+) : (
+  <img
+    src=""
+    alt={alt}
+    width={width}
+    height={height ?? undefined}
+    class={className}
+    style={style}
+    data-placeholder={key}
+    aria-hidden="true"
+  />
+)}

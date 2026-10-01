@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/maison-joa-corporativo.css';
+
+const CANONICAL = Astro.site ? new URL('/politica-de-privacidade', Astro.site).href : undefined;
+---
+
+<Base
+  title="Política de Privacidade · Maison Joá"
+  description="Saiba como a Maison Joá coleta, usa e protege seus dados pessoais."
+  canonical={CANONICAL}
+  noIndex={false}
+>
+<Fragment slot="head">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" />
+</Fragment>
+
+<main class="politica">
+  <div class="container">
+    <div class="politica-content">
+      <a href="/" class="politica-voltar">← Voltar ao site</a>
+      <h1>Política de Privacidade</h1>
+      <p class="politica-updated">Última atualização: outubro de 2026</p>
+
+      <h2>1. Quem somos</h2>
+      <p>A <strong>Maison Joá</strong> é um espaço de eventos localizado na Estrada do Joá, 3000, Joá, Rio de Janeiro — RJ, CEP 22611-022. Este site (<em>eventos.maisonjoa.com.br</em>) é operado pela Maison Joá com o objetivo de apresentar o espaço e receber solicitações de orçamento.</p>
+
+      <h2>2. Dados que coletamos</h2>
+      <p>Ao preencher o formulário de orçamento, coletamos:</p>
+      <ul>
+        <li>Nome completo</li>
+        <li>Nome da empresa</li>
+        <li>Telefone (WhatsApp)</li>
+        <li>E-mail</li>
+        <li>Data prevista do evento</li>
+        <li>Número estimado de convidados</li>
+      </ul>
+      <p>Também registramos automaticamente informações de navegação (UTMs, referência de origem, agente de usuário e URL da página) para entender como você chegou ao site.</p>
+
+      <h2>3. Como usamos seus dados</h2>
+      <p>Os dados coletados são usados exclusivamente para:</p>
+      <ul>
+        <li>Responder à sua solicitação de orçamento por WhatsApp ou e-mail;</li>
+        <li>Melhorar a comunicação e o atendimento da Maison Joá.</li>
+      </ul>
+      <p>Não vendemos, alugamos nem compartilhamos seus dados com terceiros para fins de marketing.</p>
+
+      <h2>4. Armazenamento e segurança</h2>
+      <p>Os dados são transmitidos de forma segura (HTTPS) e armazenados em sistemas internos da Maison Joá. Adotamos medidas técnicas e organizacionais para proteger as informações contra acesso não autorizado.</p>
+
+      <h2>5. Seus direitos (LGPD)</h2>
+      <p>Nos termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você tem direito a:</p>
+      <ul>
+        <li>Confirmar a existência do tratamento de seus dados;</li>
+        <li>Acessar, corrigir ou solicitar a exclusão de seus dados;</li>
+        <li>Revogar o consentimento a qualquer momento.</li>
+      </ul>
+      <p>Para exercer esses direitos, entre em contato pelo e-mail <a href="mailto:contato@maisonjoa.com.br">contato@maisonjoa.com.br</a>.</p>
+
+      <h2>6. Cookies e rastreamento</h2>
+      <p>Este site pode utilizar cookies de sessão para capturar parâmetros de origem (UTMs) e identificar a origem do seu acesso. Nenhum cookie é usado para rastreamento entre sites ou venda de dados.</p>
+
+      <h2>7. Alterações nesta política</h2>
+      <p>Podemos atualizar esta política periodicamente. A data de "última atualização" no topo da página refletirá qualquer modificação.</p>
+
+      <h2>8. Contato</h2>
+      <p>Dúvidas sobre esta política? Fale conosco:</p>
+      <address>
+        <strong>Maison Joá</strong><br />
+        Estrada do Joá, 3000 — Joá, Rio de Janeiro — RJ<br />
+        E-mail: <a href="mailto:contato@maisonjoa.com.br">contato@maisonjoa.com.br</a>
+      </address>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>© 2026 Maison Joá · Rio de Janeiro. Direitos reservados.</p>
+  </div>
+</footer>
+</Base>
+
+<style>
+  .politica {
+    padding: 80px 0 120px;
+    background: var(--creme, #F8F1E7);
+  }
+
+  .politica-content {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .politica-voltar {
+    display: inline-block;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    color: var(--bronze, #7F6038);
+    text-decoration: none;
+    font-family: var(--font-body, 'Jost', sans-serif);
+    letter-spacing: 0.04em;
+  }
+
+  .politica-voltar:hover { text-decoration: underline; }
+
+  .politica-content h1 {
+    font-family: var(--font-display, 'Cormorant Garamond', serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    color: var(--cafe, #211810);
+    margin-bottom: 0.25rem;
+    line-height: 1.15;
+  }
+
+  .politica-updated {
+    font-size: 0.8rem;
+    color: var(--bronze, #7F6038);
+    margin-bottom: 2.5rem;
+    font-family: var(--font-body, 'Jost', sans-serif);
+  }
+
+  .politica-content h2 {
+    font-family: var(--font-display, 'Cormorant Garamond', serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--cafe, #211810);
+    margin: 2.5rem 0 0.75rem;
+  }
+
+  .politica-content p,
+  .politica-content ul,
+  .politica-content address {
+    font-family: var(--font-body, 'Jost', sans-serif);
+    font-size: 0.95rem;
+    color: #3a2e25;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-style: normal;
+  }
+
+  .politica-content ul {
+    padding-left: 1.4rem;
+  }
+
+  .politica-content li { margin-bottom: 0.4rem; }
+
+  .politica-content a {
+    color: var(--bronze, #7F6038);
+    text-underline-offset: 2px;
+  }
+</style>
