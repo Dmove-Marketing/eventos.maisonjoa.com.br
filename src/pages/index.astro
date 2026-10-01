@@ -1,154 +1,27 @@
 ---
-import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import config from '../../config.json';
 import Img from '../components/ui/Img.astro';
-import LeadForm from '../components/forms/LeadForm.astro';
-import StaticMap from '../components/ui/StaticMap.astro';
-import WhatsAppWidget from '../components/ui/WhatsAppWidget.astro';
-import '../styles/maison-joa-corporativo.css';
 
-
-// SEO: URL canônica e og:image dependem do domínio (site em astro.config.mjs / SITE_URL)
 const CANONICAL = Astro.site ? new URL('/', Astro.site).href : undefined;
-const OG_IMAGE = Astro.site ? new URL('/og-image.jpg', Astro.site).href : '/og-image.jpg';
-const JSON_LD = {
-  '@context': 'https://schema.org',
-  '@type': 'EventVenue',
-  name: 'Maison Joá',
-  description: 'Espaço de eventos corporativos no Joá, Rio de Janeiro: varanda com vista, salão climatizado, cozinha autoral, DJ e painel de LED.',
-  url: CANONICAL,
-  image: OG_IMAGE,
-  maximumAttendeeCapacity: 300,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Estrada do Joá, 3000',
-    addressLocality: 'Rio de Janeiro',
-    addressRegion: 'RJ',
-    postalCode: '22611-022',
-    addressCountry: 'BR',
+const OG_IMAGE  = Astro.site ? new URL('/og-image.jpg', Astro.site).href : '/og-image.jpg';
+
+const cards = [
+  {
+    slug: 'eventos-corporativos',
+    label: 'Eventos Corporativos',
+    sub: 'Confraternizações e festas de fim de ano',
+    href: '/eventos-corporativos',
+    img: 'maison-joa-corporativo/eventos/evento-12.jpg',
+    imgAlt: 'Evento noturno com teto de luzes, globos espelhados e pista de LED na Maison Joá',
   },
-};
-
-// Mapa da seção de localização (embed simples do Google Maps, sem chave de API; cliques bloqueados pelo StaticMap)
-const MAPA_SRC = 'https://www.google.com/maps?q=' + encodeURIComponent('Estrada do Joá, 3000 - Joá, Rio de Janeiro - RJ, 22611-022') + '&z=15&output=embed';
-
-// Faixa parallax: usada como background CSS, então gera a URL otimizada aqui
-import parallaxSrc from '../assets/images/maison-joa-corporativo/parallax-varanda-entardecer.png';
-const parallax = await getImage({ src: parallaxSrc, width: 1536, format: 'webp', quality: 82 });
-
-// Carrossel da seção Solução completa: gastronomia, bar e audiovisual intercalados
-const gastronomia = [
-  { src: 'maison-joa-corporativo/solucoes/solucoes-01-finger-food.png',   alt: 'Mesa de finger food com mini porções em copinhos e espetos, montada para coquetel' },
-  { src: 'maison-joa-corporativo/solucoes/solucoes-02-palco-led.jpg',     alt: 'Palco com painel de LED, cabine de DJ e iluminação cênica sobre a pista' },
-  { src: 'maison-joa-corporativo/solucoes/solucoes-03-bar-destilados.jpg', alt: 'Bar de destilados com torneiras de cobre, taças suspensas e cordão de luzes' },
-  { src: 'maison-joa-corporativo/solucoes/solucoes-04-painel-led.jpg',    alt: 'Salão escuro com painel de LED e piso iluminado exibindo flores de cerejeira' },
-  { src: 'maison-joa-corporativo/solucoes/solucoes-05-bar-jardim.png',    alt: 'Bar montado no jardim com garrafas de destilados, luzes pendentes e plantas tropicais' },
-  { src: 'maison-joa-corporativo/solucoes/solucoes-06-chope.png',         alt: 'Chope sendo servido na chopeira do bar, com iluminação rosa ao fundo' },
-];
-
-// Logos de clientes (enviados pela cliente), convertidos para bronze monocromático.
-// h = altura em px calculada pela proporção de cada logo, para equilibrar o peso visual.
-const clientes = [
-  { src: 'maison-joa-corporativo/clientes/tv-globo.png', alt: "TV Globo", h: 70 },
-  { src: 'maison-joa-corporativo/clientes/loreal.png', alt: "L'Oréal", h: 36 },
-  { src: 'maison-joa-corporativo/clientes/pfizer.png', alt: "Pfizer", h: 54 },
-  { src: 'maison-joa-corporativo/clientes/earj.png', alt: "Escola Americana do Rio de Janeiro", h: 61 },
-  { src: 'maison-joa-corporativo/clientes/huawei.png', alt: "Huawei", h: 76 },
-  { src: 'maison-joa-corporativo/clientes/redley.png', alt: "Redley", h: 54 },
-  { src: 'maison-joa-corporativo/clientes/lilly.png', alt: "Lilly", h: 62 },
-  { src: 'maison-joa-corporativo/clientes/sulamerica.png', alt: "SulAmérica", h: 42 },
-  { src: 'maison-joa-corporativo/clientes/cantao.png', alt: "Cantão", h: 32 },
-  { src: 'maison-joa-corporativo/clientes/eleva.png', alt: "Escola Eleva", h: 55 },
-  { src: 'maison-joa-corporativo/clientes/mopi.png', alt: "Mopi", h: 61 },
-];
-
-// Mosaicos (ambientes e eventos) — size: big (2x2) | tall (1x2) | wide (2x1) | '' (1x1)
-// A ordem importa: cada conjunto fecha um grid de 4 colunas sem buracos
-// (ambientes: 32 células = 8 linhas · eventos: 36 células = 9 linhas).
-const mosaicoFiles = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/images/maison-joa-corporativo/{ambientes,eventos}/*.{jpg,jpeg,png}',
-  { eager: true }
-);
-const ambientesBase = [
-  { src: 'maison-joa-corporativo/ambientes/ambiente-01.jpg', size: 'big',  alt: 'Varanda coberta ampla com gramado, bancos de madeira, tecido no teto e vista para a mata' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-02.jpg', size: 'big',  alt: 'Salão com teto de flores pendentes, globos espelhados e mesas iluminadas' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-03.jpg', size: 'tall', alt: 'Salão decorado com flores suspensas e pista de LED iluminada' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-04.jpg', size: 'wide', alt: 'Varanda com gramado e mesas bistrô ao fim da tarde, com vista para a mata' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-05.jpg', size: '',     alt: 'Mesa redonda posta com arranjo de flores e cadeiras brancas' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-06.jpg', size: 'tall', alt: 'Varanda com guarda-corpo, mesas bistrô e sol entre as árvores' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-07.jpg', size: 'wide', alt: 'Lounge na varanda com pufes, almofadas e arranjos de girassóis' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-08.jpg', size: '',     alt: 'Lounge com pufes e almofadas coloridas em torno de uma árvore iluminada' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-09.jpg', size: '',     alt: 'Salão interno com piso de granito e iluminação lilás' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-10.jpg', size: 'tall', alt: 'Mesa posta na varanda com arranjo de flores e vista para o verde' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-11.jpg', size: 'wide', alt: 'Pista de dança com iluminação de festa e mesas altas ao redor' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-12.jpg', size: 'wide', alt: 'Lounge com sofá clássico, almofadas azuis e palmeiras iluminadas' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-13.jpg', size: '',     alt: 'Varanda coberta com gramado, bancos de madeira e jardim' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-14.jpg', size: '',     alt: 'Varanda ao pôr do sol com bancos de madeira e mesas bistrô' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-15.jpg', size: 'wide', alt: 'Pista com iluminação azul e bar ao fundo' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-16.jpg', size: 'wide', alt: 'Salão com bar, telão e mesas bistrô iluminadas' },
-  { src: 'maison-joa-corporativo/ambientes/ambiente-17.jpg', size: '',     alt: 'Varanda com bancos de madeira, plantas e iluminação suave' },
-];
-const eventosBase = [
-  { src: 'maison-joa-corporativo/eventos/evento-01.jpg', size: 'big',  alt: 'Convidados reunidos na varanda com gramado durante evento de dia' },
-  { src: 'maison-joa-corporativo/eventos/evento-02.jpg', size: 'tall', alt: 'Convidados na varanda ao entardecer, com lounge ao fundo' },
-  { src: 'maison-joa-corporativo/eventos/evento-03.jpg', size: '',     alt: 'Evento na varanda com convidados circulando entre o bar e o gramado' },
-  { src: 'maison-joa-corporativo/eventos/evento-04.jpg', size: '',     alt: 'Convidados na área coberta com gramado e bancadas ao fundo' },
-  { src: 'maison-joa-corporativo/eventos/evento-05.jpg', size: 'wide', alt: 'Vista panorâmica da varanda com mesas e convidados em evento' },
-  { src: 'maison-joa-corporativo/eventos/evento-06.jpg', size: 'wide', alt: 'Pista cheia com convidados dançando à noite' },
-  { src: 'maison-joa-corporativo/eventos/evento-07.jpg', size: 'tall', alt: 'Convidados na varanda decorada com flores rosas suspensas' },
-  { src: 'maison-joa-corporativo/eventos/evento-08.jpg', size: '',     alt: 'Brinde entre convidados na varanda com plantas tropicais' },
-  { src: 'maison-joa-corporativo/eventos/evento-09.jpg', size: '',     alt: 'Convidados em volta das bancadas de comida na área coberta' },
-  { src: 'maison-joa-corporativo/eventos/evento-10.jpg', size: '',     alt: 'Festa com iluminação colorida e convidados na pista' },
-  { src: 'maison-joa-corporativo/eventos/evento-11.jpg', size: '',     alt: 'Pista à noite com iluminação azul e muitos convidados' },
-  { src: 'maison-joa-corporativo/eventos/evento-12.jpg', size: 'big',  alt: 'Evento noturno com teto de luzes, globos espelhados e pista de LED' },
-  { src: 'maison-joa-corporativo/eventos/evento-13.jpg', size: 'wide', alt: 'Show de luzes sobre a pista lotada' },
-  { src: 'maison-joa-corporativo/eventos/evento-14.jpg', size: '',     alt: 'Entrada da varanda com decoração de palha e convidados ao fundo' },
-  { src: 'maison-joa-corporativo/eventos/evento-15.jpg', size: '',     alt: 'Convidados na varanda com lustre e vista para o morro' },
-  { src: 'maison-joa-corporativo/eventos/evento-16.jpg', size: 'wide', alt: 'Vista panorâmica de evento noturno na varanda com iluminação azul' },
-  { src: 'maison-joa-corporativo/eventos/evento-17.jpg', size: 'wide', alt: 'Discurso para os convidados no salão interno' },
-  { src: 'maison-joa-corporativo/eventos/evento-18.jpg', size: '',     alt: 'Convidados em volta de mesa decorada com arranjo alto' },
-  { src: 'maison-joa-corporativo/eventos/evento-19.jpg', size: '',     alt: 'Convidados animados sob o teto de luzes e globos espelhados' },
-  { src: 'maison-joa-corporativo/eventos/evento-20.jpg', size: 'wide', alt: 'Vista panorâmica de convidados na varanda iluminada em azul' },
-  { src: 'maison-joa-corporativo/eventos/evento-21.jpg', size: 'wide', alt: 'Pista de LED com convidados sob luzes e flores suspensas' },
-];
-// Soluções: versão ampliada (WebP 1920px) para a galeria em tela cheia
-const solucoesFiles = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/images/maison-joa-corporativo/solucoes/*.{jpg,jpeg,png}',
-  { eager: true }
-);
-const solucoes = await Promise.all(gastronomia.map(async (g) => {
-  const mod = solucoesFiles[`/src/assets/images/${g.src}`];
-  const full = mod ? (await getImage({ src: mod.default, width: 1920, format: 'webp' })).src : '';
-  return { ...g, full };
-}));
-
-// Versão ampliada (WebP 1920px) para a galeria em tela cheia
-const comAmpliada = (lista: { src: string; size: string; alt: string }[]) =>
-  Promise.all(lista.map(async (a) => {
-    const mod = mosaicoFiles[`/src/assets/images/${a.src}`];
-    const full = mod ? (await getImage({ src: mod.default, width: 1920, format: 'webp' })).src : '';
-    return { ...a, full };
-  }));
-const ambientes = await comAmpliada(ambientesBase);
-const eventos = await comAmpliada(eventosBase);
-
-const leadFields: any[] = [
-  { name: 'Nome',              type: 'text',     placeholder: 'Seu nome',           required: true,  full: true },
-  { name: 'Empresa',           type: 'text',     placeholder: 'Nome da empresa',    required: true,  full: true, autocomplete: 'organization' },
-  { name: 'Telefone',          type: 'tel',      placeholder: 'WhatsApp',           required: true,  mask: 'phone' },
-  { name: 'E-mail',            type: 'email',    placeholder: 'E-mail corporativo', required: true  },
-  { name: 'Data do evento',    type: 'date',     placeholder: 'Data prevista',      required: true },
-  { name: 'Número de pessoas', type: 'number',   placeholder: 'Nº de convidados',   required: true, min: '1' },
 ];
 ---
 
 <Base
-  title="Maison Joá · Eventos corporativos na Barra da Tijuca, RJ"
-  description="Espaço de eventos na Estrada do Joá com buffet autoral, ambientação, som e painel de LED. Confraternizações e eventos de empresa entregues completos."
+  title="Maison Joá · Espaço de Eventos no Joá, Rio de Janeiro"
+  description="Espaço de eventos na Estrada do Joá com vista para a mata, cozinha autoral, DJ e painel de LED. Escolha o seu tipo de evento."
   ogImage={OG_IMAGE}
   canonical={CANONICAL}
-  jsonLd={JSON_LD}
 >
 <Fragment slot="head">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -156,295 +29,236 @@ const leadFields: any[] = [
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" />
 </Fragment>
 
-<a href="#sobre" class="skip-link">Ir direto ao conteúdo</a>
+<main class="ht-main">
 
-<main>
+  <div class="ht-logo">
+    <Img src="maison-joa-corporativo/marca/logo-maison-joa-creme.png" alt="Maison Joá" width={360} priority />
+  </div>
 
-  <!-- HERO -->
-  <section class="hero" id="hero">
-    <div class="bg">
-      <Img src="maison-joa-corporativo/hero-varanda-sunset.png" alt="Varanda coberta da Maison Joá ao pôr do sol, com mesas bistrô decoradas com flores tropicais, lounge de madeira e vista para a mata" width={1536} quality={82} priority />
-    </div>
-    <div class="container">
-      <div class="hero-copy">
-        <Img src="maison-joa-corporativo/marca/logo-maison-joa-creme.png" alt="Maison Joá" class="hero-logo" width={480} priority />
-        <h1>A confraternização da sua<br class="br-d"> empresa no lugar mais<br class="br-d"> encantador do Joá</h1>
-        <p class="lead">Feche o ano com uma festa completa e inesquecível</p>
-        <a class="btn btn-solid" href="#contato">Solicitar orçamento</a>
-      </div>
-    </div>
+  <div class="ht-body">
+    <p class="ht-eyebrow">Estrada do Joá, Rio de Janeiro</p>
+    <h1 class="ht-headline">Para qual ocasião você<br>procura um espaço?</h1>
 
-    <!-- faixa de diferenciais na base da hero (pedido da cliente) -->
-    <div class="hero-faixa">
-      <div class="hero-faixa-inner">
-      <ul class="hero-destaques" aria-label="Diferenciais da Maison Joá">
-        <li>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 18h18M7 21h10M6 14a6 6 0 0 1 12 0M12 4v3M5.6 7.6l1.4 1.4M18.4 7.6 17 9M2.5 14h1.5M20 14h1.5" /></svg>
-          <span>Pôr do sol na área externa</span>
-        </li>
-        <li>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9 3.5l3 2.5 3-2.5M9 20.5l3-2.5 3 2.5M3.5 10.6l3.6-1.1-.7-3.7M20.5 13.4l-3.6 1.1.7 3.7M3.5 13.4l3.6 1.1-.7 3.7M20.5 10.6l-3.6-1.1.7-3.7" /></svg>
-          <span>Salão amplo e climatizado</span>
-        </li>
-        <li>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3v7a2 2 0 0 0 2 2m0 0a2 2 0 0 0 2-2V3M9 12v9M9 3v5M17 21V3c-2 .8-3 3-3 6v4h3" /></svg>
-          <span>Cozinha autoral</span>
-        </li>
-        <li>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" /></svg>
-          <span>DJ e painel de LED</span>
-        </li>
-        <li>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2" /><circle cx="18" cy="5" r="2" /><path d="M8 19h8.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H16" /></svg>
-          <span>Fácil acesso pela Barra</span>
-        </li>
-        <li>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 19 6v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3Z" /><path d="m9 12 2 2 4-4" /></svg>
-          <span>Conforto e segurança</span>
-        </li>
-      </ul>
-      </div>
+    <div class="ht-grid">
+      {cards.map((c) => (
+        <a class="ht-card" href={c.href} data-funil={c.slug}>
+          <div class="ht-card-bg">
+            <Img src={c.img} alt={c.imgAlt} width={900} />
+          </div>
+          <div class="ht-card-content">
+            <span class="ht-card-label">{c.label}</span>
+            <span class="ht-card-sub">{c.sub}</span>
+            <span class="ht-card-cta">Solicitar orçamento →</span>
+          </div>
+        </a>
+      ))}
     </div>
-  </section>
-
-  <!-- SOBRE -->
-  <section id="sobre">
-    <div class="container">
-      <div class="two-col">
-        <div class="col-text">
-          <span class="eyebrow">Maison Joá</span>
-          <h2>Um espaço completo<br class="br-d"> para a sua empresa</h2>
-          <div class="divider"></div>
-          <p>Entre a Barra e o Joá, um espaço pensado para receber a festa da sua empresa do começo ao fim.</p>
-          <!-- estrutura: números confirmados pelo cliente -->
-          <ul class="infra" aria-label="Estrutura da Maison Joá">
-            <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" /><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" /><circle cx="17" cy="9" r="2.5" /><path d="M16.5 14.2c2.6.4 4.5 2.8 4.5 5.8" /></svg>
-              <span><strong>Capacidade</strong>até 300 pessoas</span>
-            </li>
-            <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M10 17V7h3.5a3 3 0 0 1 0 6H10" /></svg>
-              <span><strong>Estacionamento</strong>60 vagas no local</span>
-            </li>
-            <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 18h18M7 21h10M6 14a6 6 0 0 1 12 0M12 4v3M5.6 7.6l1.4 1.4M18.4 7.6 17 9M2.5 14h1.5M20 14h1.5" /></svg>
-              <span><strong>Varanda coberta</strong>400 m², com vista e pôr do sol</span>
-            </li>
-            <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3 19 6v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3Z" /><path d="m9 12 2 2 4-4" /></svg>
-              <span><strong>Acesso fácil e seguro</strong>pela Estrada do Joá, na Barra</span>
-            </li>
-            <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6" /></svg>
-              <span><strong>Salão climatizado</strong>500 m²</span>
-            </li>
-            <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2" /><circle cx="12" cy="14" r="3.5" /><circle cx="12" cy="7.5" r="1" /></svg>
-              <span><strong>Pista e palco</strong>som, luz e painel de LED</span>
-            </li>
-          </ul>
-        </div>
-        <div class="col-media">
-          <Img src="maison-joa-corporativo/conceito-escadaria-entrada.png" alt="Escadaria de entrada da Maison Joá entre palmeiras, levando à fachada branca da casa" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ESTRUTURA -->
-  <section class="alt" id="estrutura">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">O espaço</span>
-        <h2>Um ambiente para<br class="br-d"> cada momento da festa</h2>
-        <p>Da varanda ao salão, do lounge à pista de dança, cada ambiente recebe uma parte da festa da sua empresa.</p>
-      </div>
-      <!-- Desktop: mosaico · Mobile (≤640px): carrossel com bolinhas -->
-      <div class="ambientes-slider">
-        <div class="mosaico-ambientes">
-          {ambientes.map((a, i) => (
-            <button type="button" class={a.size || undefined} data-gallery="ambientes" data-index={i} data-full={a.full} aria-label={`Ampliar foto: ${a.alt}`}>
-              <Img src={a.src} alt={a.alt} width={a.size === 'big' ? 1200 : 800} />
-            </button>
-          ))}
-        </div>
-        <button type="button" class="seta prev" aria-label="Foto anterior"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7" /></svg></button>
-        <button type="button" class="seta next" aria-label="Próxima foto"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg></button>
-        <div class="slider-dots">
-          {ambientes.map((_, i) => <button type="button" aria-label={`Ir para a foto ${i + 1}`} aria-current={i === 0 ? 'true' : undefined}></button>)}
-        </div>
-      </div>
-      <div class="secao-cta"><a class="btn btn-solid" href="#contato">Solicitar orçamento</a></div>
-    </div>
-  </section>
-
-  <!-- SOLUÇÃO COMPLETA -->
-  <section id="solucao">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Tudo incluso</span>
-        <h2>Tudo o que a sua festa<br class="br-d"> precisa, em um só lugar</h2>
-        <p>Você diz como quer a festa. Buffet, decoração, ambientação e audiovisual ficam por conta da Maison, com um único contato do início ao fim.</p>
-      </div>
-    </div>
-    <div class="marquee" data-marquee data-duracao="46">
-    <div class="carrossel-gastronomia" aria-label="Galeria de gastronomia, decoração e audiovisual">
-      <div class="carrossel-track">
-        {solucoes.map((g, i) => (
-          <figure>
-            <button type="button" data-gallery="solucoes" data-index={i} data-full={g.full} aria-label={`Ampliar foto: ${g.alt}`}>
-              <Img src={g.src} alt={g.alt} width={720} />
-            </button>
-          </figure>
-        ))}
-        {solucoes.map((g, i) => (
-          <figure aria-hidden="true">
-            <button type="button" tabindex="-1" data-gallery="solucoes" data-index={i} data-full={g.full}>
-              <Img src={g.src} alt="" width={720} />
-            </button>
-          </figure>
-        ))}
-      </div>
-    </div>
-      <button type="button" class="seta prev" aria-label="Foto anterior"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7" /></svg></button>
-      <button type="button" class="seta next" aria-label="Próxima foto"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg></button>
-    </div>
-  </section>
-
-  <!-- PARALLAX -->
-  <section
-    class="parallax"
-    id="experiencia"
-    role="img"
-    aria-label="Varanda da Maison Joá ao entardecer, com mesas bistrô, lanternas acesas e vista para a mata"
-    style={`background-image:url('${parallax.src}')`}
-  ></section>
-
-  <!-- EVENTOS (mesmo mosaico + carrossel mobile dos ambientes) -->
-  <section class="alt" id="eventos">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Eventos</span>
-        <h2>O espaço onde acontecem<br class="br-d"> as melhores festas</h2>
-        <p>Confraternizações e festas de fim de ano de empresas que escolheram a Maison.</p>
-      </div>
-      <div class="ambientes-slider">
-        <div class="mosaico-ambientes">
-          {eventos.map((a, i) => (
-            <button type="button" class={a.size || undefined} data-gallery="eventos" data-index={i} data-full={a.full} aria-label={`Ampliar foto: ${a.alt}`}>
-              <Img src={a.src} alt={a.alt} width={a.size === 'big' ? 1200 : 800} />
-            </button>
-          ))}
-        </div>
-        <button type="button" class="seta prev" aria-label="Foto anterior"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7" /></svg></button>
-        <button type="button" class="seta next" aria-label="Próxima foto"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg></button>
-        <div class="slider-dots">
-          {eventos.map((_, i) => <button type="button" aria-label={`Ir para a foto ${i + 1}`} aria-current={i === 0 ? 'true' : undefined}></button>)}
-        </div>
-      </div>
-      <div class="secao-cta"><a class="btn btn-solid" href="#contato">Solicitar orçamento</a></div>
-    </div>
-  </section>
-
-  <!-- CLIENTES -->
-  <section id="clientes">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Clientes</span>
-        <h2>Já passaram por aqui</h2>
-        <p>Empresas que já confiaram a sua festa à Maison.</p>
-      </div>
-    </div>
-    <div class="marquee" data-marquee data-duracao="80">
-    <div class="carrossel-clientes" aria-label="Logotipos de clientes parceiros">
-      <div class="carrossel-track-clientes">
-        {/* loop infinito: duas metades idênticas (cada uma com a lista 2x, mais larga que qualquer tela);
-            a animação anda exatamente uma metade e recomeça sem emenda visível */}
-        {[0, 1].map((metade) => [...clientes, ...clientes].map((c, i) => (
-          <Img src={c.src} alt={metade === 0 && i < clientes.length ? c.alt : ''} width={480} loading="eager" style={`--h:${c.h}px`} />
-        )))}
-      </div>
-    </div>
-      <button type="button" class="seta prev" aria-label="Logo anterior"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7" /></svg></button>
-      <button type="button" class="seta next" aria-label="Próximo logo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" /></svg></button>
-    </div>
-  </section>
-
-  <!-- LOCALIZAÇÃO (mapa fora do bloco do formulário para não competir com ele) -->
-  <section class="alt" id="localizacao">
-    <div class="container">
-      <div class="two-col">
-        <div class="col-media">
-          <StaticMap src={MAPA_SRC} height={400} class="localizacao-mapa" />
-        </div>
-        <div class="col-text">
-          <span class="eyebrow">Localização</span>
-          <h2>Como chegar</h2>
-          <div class="divider"></div>
-          <p>Acesso fácil para quem vem da Barra, da Zona Sul e da Zona Oeste, com estacionamento amplo no local.</p>
-          <address class="endereco">
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" /><circle cx="12" cy="9.5" r="2.5" /></svg>
-            <span>
-              <span class="endereco-rua">Estrada do Joá, 3000</span>
-              <span class="endereco-cidade">Joá, Rio de Janeiro · 22611-022</span>
-            </span>
-          </address>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTATO -->
-  <section class="contato" id="contato">
-    <div class="bg">
-      <Img src="maison-joa-corporativo/hero-varanda-sunset.png" alt="" width={1536} quality={82} />
-    </div>
-    <div class="container">
-      <div class="intro">
-        <span class="eyebrow">Orçamento</span>
-        <h2>Vamos desenhar o evento<br>da sua empresa?</h2>
-        <p>Conte sua ideia e receba uma proposta completa.</p>
-      </div>
-
-      <LeadForm
-        formId="lead-form"
-        prefix="pcc"
-        class="form-panel sn-lf"
-        project={config.project_slug}
-        submitUrl={config.forms['lead-form'].webhooks[0]}
-        redirectUrl={config.forms['lead-form'].redirect_on_success}
-        submitText="Receber proposta"
-        honeypot
-        fields={leadFields}
-      />
-    </div>
-  </section>
+  </div>
 
 </main>
 
-<footer class="site-footer">
-  <div class="container">
-    <div class="f-logo"><Img src="maison-joa-corporativo/marca/logo-maison-joa-creme.png" alt="Maison Joá" width={400} /></div>
-    <p>© 2026 Maison Joá · Rio de Janeiro. Direitos reservados.</p>
-    <div class="by">Desenvolvido por <a href="https://dmove.com.br" target="_blank" rel="noopener noreferrer"><Img src="https://media.dmove.com.br/clients/dmove/photos/logo-dmove.webp" alt="Dmove" /></a></div>
-  </div>
+<footer class="ht-footer">
+  <p>© 2026 Maison Joá · Rio de Janeiro. Direitos reservados.</p>
+  <div class="ht-by">Desenvolvido por <a href="https://dmove.com.br" target="_blank" rel="noopener noreferrer">Dmove</a></div>
 </footer>
 
-<WhatsAppWidget
-  showEmpresaField={true}
-  pageSource="Landing page/corporativo"
-/>
-
-<!-- Lightbox do mosaico de ambientes -->
-<div id="lightbox" role="dialog" aria-modal="true" aria-label="Galeria de fotos">
-  <button type="button" class="close" aria-label="Fechar">✕</button>
-  <button type="button" class="nav prev" aria-label="Foto anterior">‹</button>
-  <img src="" alt="" />
-  <button type="button" class="nav next" aria-label="Próxima foto">›</button>
-  <p class="counter" aria-live="polite"></p>
-</div>
-
-</Base>
 <script>
-  import '../scripts/maison-joa-corporativo.js';
+  document.querySelectorAll<HTMLElement>('[data-funil]').forEach((el) => {
+    el.addEventListener('click', () => {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'escolha_funil', funil: el.dataset.funil });
+    });
+  });
 </script>
+</Base>
+
+<style>
+  :root {
+    --cafe:   #211810;
+    --creme:  #F8F1E7;
+    --bronze: #7F6038;
+    --areia:  #EFE4D3;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body:    'Jost', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cafe);
+    color: var(--creme);
+    font-family: var(--font-body);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Layout principal ── */
+  .ht-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 56px 24px 48px;
+    gap: 40px;
+  }
+
+  .ht-logo img {
+    width: clamp(180px, 40vw, 300px);
+    height: auto;
+    display: block;
+  }
+
+  .ht-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  /* ── Textos ── */
+  .ht-eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--bronze);
+  }
+
+  .ht-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--creme);
+  }
+
+  /* ── Grade de cards ── */
+  .ht-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 420px));
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+  }
+
+  /* ── Card ── */
+  .ht-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    aspect-ratio: 3 / 4;
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .ht-card-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .ht-card-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+
+  .ht-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      to top,
+      rgba(33, 24, 16, 0.88) 0%,
+      rgba(33, 24, 16, 0.3) 50%,
+      rgba(33, 24, 16, 0.05) 100%
+    );
+    transition: opacity 0.3s ease;
+  }
+
+  .ht-card:hover .ht-card-bg img { transform: scale(1.04); }
+  .ht-card:hover::before { opacity: 0.85; }
+
+  .ht-card-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 28px 24px;
+  }
+
+  .ht-card-label {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: var(--creme);
+    line-height: 1.15;
+  }
+
+  .ht-card-sub {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--areia);
+    letter-spacing: 0.04em;
+    opacity: 0.85;
+  }
+
+  .ht-card-cta {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    border-bottom: 1px solid var(--bronze);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+    width: fit-content;
+  }
+
+  .ht-card:hover .ht-card-cta {
+    color: var(--creme);
+    border-color: var(--creme);
+  }
+
+  /* ── Footer ── */
+  .ht-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    padding: 24px;
+    border-top: 1px solid rgba(127, 96, 56, 0.2);
+    font-size: 0.72rem;
+    color: rgba(248, 241, 231, 0.4);
+    font-family: var(--font-body);
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .ht-by a {
+    color: rgba(248, 241, 231, 0.5);
+    text-decoration: none;
+  }
+  .ht-by a:hover { color: var(--bronze); }
+
+  /* ── Mobile ── */
+  @media (max-width: 480px) {
+    .ht-main { padding: 40px 20px 36px; gap: 28px; }
+    .ht-grid { grid-template-columns: 1fr; }
+    .ht-card { aspect-ratio: 4 / 3; }
+  }
+</style>
