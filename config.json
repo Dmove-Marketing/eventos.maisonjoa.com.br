@@ -24,6 +24,11 @@
       ]
     }
   },
+  "whatsapp": {
+    "phone": "",
+    "display_name": "Maison Joá",
+    "avatar": ""
+  },
   "deploy": {
     "remote_path": "/var/www/eventos.maisonjoa.com.br",
     "server": "157.173.197.116",

@@ -5,6 +5,7 @@ import config from '../../config.json';
 import Img from '../components/ui/Img.astro';
 import LeadForm from '../components/forms/LeadForm.astro';
 import StaticMap from '../components/ui/StaticMap.astro';
+import WhatsAppWidget from '../components/ui/WhatsAppWidget.astro';
 import '../styles/maison-joa-corporativo.css';
 
 
@@ -434,6 +435,11 @@ const leadFields: any[] = [
     <div class="by">Desenvolvido por <a href="https://dmove.com.br" target="_blank" rel="noopener noreferrer"><Img src="https://media.dmove.com.br/clients/dmove/photos/logo-dmove.webp" alt="Dmove" /></a></div>
   </div>
 </footer>
+
+<WhatsAppWidget
+  showEmpresaField={true}
+  pageSource="Landing page/corporativo"
+/>
 
 <!-- Lightbox do mosaico de ambientes -->
 <div id="lightbox" role="dialog" aria-modal="true" aria-label="Galeria de fotos">
