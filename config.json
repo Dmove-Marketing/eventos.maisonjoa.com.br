@@ -4,7 +4,7 @@
   "client": "Maison Joá",
   "environment": "production",
   "tracking": {
-    "gtm_id": "",
+    "gtm_id": "GTM-5J826C5J",
     "enabled": true
   },
   "forms": {
