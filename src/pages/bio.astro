@@ -1,0 +1,260 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/bio.css';
+import Img from '../components/ui/Img.astro';
+import WhatsAppWidget from '../components/ui/WhatsAppWidget.astro';
+import config from '../../config.json';
+import { tipoEventoOptions } from '../scripts/lead-payload';
+
+const webhookUrl = config.forms['lead-form'].webhooks[0];
+
+const portas = [
+  {
+    id: 'site',
+    href: 'https://www.maisonjoa.com.br/',
+    titulo: 'Conheça o espaço',
+    apoio: 'Fotos, ambientes e estrutura',
+    destaque: false,
+    icone: 'site',
+  },
+  {
+    id: 'facebook',
+    href: 'https://www.facebook.com/maisonjoa/?locale=pt_BR',
+    titulo: 'Siga no Facebook',
+    apoio: 'Fotos e novidades',
+    destaque: false,
+    icone: 'facebook',
+  },
+];
+---
+
+<Base
+  title="Maison Joá | Casamentos, Corporativos e Eventos Sociais"
+  description="O espaço mais charmoso do Joá para a sua celebração. Ambientes e gastronomia para transformar seu evento em uma experiência completa."
+  ogImage="/og-image.jpg"
+  canonical="https://eventos.maisonjoa.com.br/bio"
+  noIndex={true}
+  theme="dark"
+>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" />
+    <link rel="preload" as="image" href="/images/bio/ambiente-hero.webp" fetchpriority="high" />
+  </Fragment>
+
+  <main class="bio">
+
+    <!-- ══════════ MARCA ══════════ -->
+    <header class="bio__capa">
+      <div class="bio__capa-miolo">
+        <Img
+          class="bio__logo"
+          src="maison-joa-corporativo/marca/logo-maison-joa-creme.png"
+          alt="Maison Joá"
+          width={360}
+          priority
+        />
+        <p class="bio__segmentos">Casamentos | Corporativos | Eventos Sociais</p>
+        <h1 class="bio__titulo">O espaço mais charmoso do Joá para sua celebração</h1>
+        <p class="bio__subtitulo">Ambientes e gastronomia para transformar seu evento em uma experiência completa.</p>
+      </div>
+    </header>
+
+    <div class="bio__miolo">
+
+      <!-- ══════════ PORTAS ══════════ -->
+      <nav class="bio__portas" aria-label="Atalhos">
+        {portas.map((porta) => (
+          <a
+            class={`bio__porta${porta.destaque ? ' bio__porta--destaque' : ''}`}
+            href={porta.href}
+            data-bio={porta.id}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="bio__icone" aria-hidden="true">
+              {porta.icone === 'site' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/>
+                </svg>
+              )}
+              {porta.icone === 'facebook' && (
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              )}
+            </span>
+            <span class="bio__porta-texto">
+              <span class="bio__porta-titulo">{porta.titulo}</span>
+              <span class="bio__porta-apoio">{porta.apoio}</span>
+            </span>
+            <span class="bio__seta" aria-hidden="true">›</span>
+          </a>
+        ))}
+      </nav>
+
+      <!-- ══════════ FORMULÁRIO ══════════ -->
+      <section class="bio__form" id="bio-form-section" aria-labelledby="bio-form-titulo">
+        <h2 class="bio__form-titulo" id="bio-form-titulo">Peça seu orçamento</h2>
+        <p class="bio__form-apoio">Conte sobre o evento e entraremos em contato com datas e valores.</p>
+
+        <form
+          id="lead-form"
+          data-form-id="lead-form"
+          data-submit-url={webhookUrl}
+          data-grid-id="bio-form-section"
+          data-success-id="bio-form-success"
+          novalidate
+        >
+          <input type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <div id="leadFormMsg" class="formulario__msg"></div>
+
+          <div class="campo">
+            <label for="form-field-nome">Nome</label>
+            <input
+              id="form-field-nome"
+              type="text"
+              name="Nome"
+              placeholder="Seu nome completo"
+              required
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="form-field-telefone">Telefone (WhatsApp)</label>
+            <input
+              id="form-field-telefone"
+              type="tel"
+              name="Telefone"
+              placeholder="(21) 99999-9999"
+              required
+              autocomplete="tel"
+              inputmode="tel"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="form-field-email">E-mail</label>
+            <input
+              id="form-field-email"
+              type="email"
+              name="E-mail"
+              placeholder="seu@email.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="form-field-tipo_evento">Tipo de evento</label>
+            <select id="form-field-tipo_evento" name="Tipo de evento" required>
+              <option value="" disabled selected>Selecione o tipo</option>
+              {tipoEventoOptions.map((o) => (
+                <option value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div class="campos-duplos">
+            <div class="campo">
+              <label for="form-field-data_evento">Data prevista</label>
+              <input
+                id="form-field-data_evento"
+                type="text"
+                name="Data do evento"
+                placeholder="dd/mm/aaaa"
+                required
+                inputmode="numeric"
+              />
+            </div>
+            <div class="campo">
+              <label for="form-field-convidados">Nº de convidados</label>
+              <input
+                id="form-field-convidados"
+                type="number"
+                name="Número de pessoas"
+                placeholder="Ex: 150"
+                required
+                min="1"
+                inputmode="numeric"
+              />
+            </div>
+          </div>
+
+          <button type="submit" class="bio-btn form-submit">
+            <span class="btn-text">Enviar orçamento</span>
+            <span class="btn-loading">Enviando…</span>
+          </button>
+
+          <p class="bio__form-privacy">
+            Ao enviar, você concorda com nossa
+            <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer">política de privacidade</a>.
+          </p>
+        </form>
+      </section>
+
+      <div id="bio-form-success" class="bio__form-sucesso" role="alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <h3>Recebemos seu pedido!</h3>
+        <p>Em breve entraremos em contato pelo WhatsApp ou e-mail com as datas e os valores.</p>
+      </div>
+
+      <footer class="bio__rodape">
+        <p>Estrada do Joá · Rio de Janeiro</p>
+        <p>© {new Date().getFullYear()} Maison Joá. Direitos reservados.</p>
+      </footer>
+
+    </div>
+  </main>
+
+  <WhatsAppWidget pageSource="bio" />
+
+  <script>
+    import { initForms } from '../scripts/forms';
+    import flatpickr from 'flatpickr';
+    import { Portuguese } from 'flatpickr/dist/l10n/pt.js';
+    import 'flatpickr/dist/flatpickr.min.css';
+
+    initForms();
+
+    const dateEl = document.querySelector<HTMLInputElement>('[name="Data do evento"]');
+    if (dateEl) {
+      flatpickr(dateEl, {
+        locale: Portuguese,
+        dateFormat: 'd/m/Y',
+        minDate: 'today',
+        allowInput: true,
+        disableMobile: true,
+      });
+    }
+
+    const telEl = document.querySelector<HTMLInputElement>('[name="Telefone"]');
+    if (telEl) {
+      telEl.addEventListener('input', () => {
+        let d = telEl.value.replace(/\D/g, '');
+        if (d.startsWith('55') && d.length > 11) d = d.slice(2);
+        d = d.slice(0, 11);
+        if (d.length > 7)      telEl.value = `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+        else if (d.length > 2) telEl.value = `(${d.slice(0,2)}) ${d.slice(2)}`;
+        else if (d.length)     telEl.value = `(${d}`;
+        else                   telEl.value = '';
+      });
+    }
+
+    document.querySelectorAll<HTMLAnchorElement>('[data-bio]').forEach((porta) => {
+      porta.addEventListener('click', () => {
+        (window as any).dataLayer?.push({
+          event: 'bio_click',
+          bio_destino: porta.dataset.bio,
+          bio_url: porta.href,
+        });
+      });
+    });
+  </script>
+</Base>

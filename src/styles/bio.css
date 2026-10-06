@@ -1,0 +1,363 @@
+/* ============================================================
+   /bio — Maison Joá — link da bio do Instagram
+   ============================================================ */
+
+:root {
+  --cafe:          #211810;
+  --creme:         #F8F1E7;
+  --bronze:        #7F6038;
+  --areia:         #EFE4D3;
+  --bronze-escuro: #5E4626;
+  --bronze-claro:  #A68145;
+
+  --fonte-titulo: 'Cormorant Garamond', Georgia, serif;
+  --fonte-corpo:  'Jost', system-ui, sans-serif;
+
+  /* tokens do global.css */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Jost', system-ui, sans-serif;
+
+  --largura: 460px;
+  --gutter:  20px;
+  --radius:  14px;
+}
+
+body {
+  font-family: var(--fonte-corpo);
+  line-height: normal;
+  color: var(--cafe);
+  background: var(--cafe);
+}
+
+p { color: inherit; line-height: normal; }
+h1, h2, h3 { font-family: var(--fonte-titulo); line-height: normal; letter-spacing: normal; margin: 0; }
+
+.bio {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 52px;
+}
+
+.bio__miolo {
+  width: 100%;
+  max-width: calc(var(--largura) + var(--gutter) * 2);
+  padding-inline: var(--gutter);
+  box-sizing: border-box;
+}
+
+/* ── Topo: marca e promessa ── */
+.bio__capa {
+  position: relative;
+  width: 100%;
+  padding: 44px var(--gutter) 40px;
+  text-align: center;
+  color: var(--creme);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.bio__capa-miolo {
+  position: relative;
+  z-index: 1;
+  max-width: var(--largura);
+  margin-inline: auto;
+}
+.bio__capa::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(33,24,16,.72) 0%, rgba(33,24,16,.94) 76%, var(--cafe) 100%),
+    url('/images/bio/ambiente-hero.webp') center 42% / cover no-repeat;
+}
+
+.bio__logo {
+  width: 164px;
+  height: auto;
+  margin: 0 auto 22px;
+  display: block;
+}
+
+.bio__segmentos {
+  margin: 0 0 16px;
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--bronze-claro);
+  text-wrap: balance;
+}
+
+.bio__titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 0 14px;
+  text-wrap: balance;
+  color: var(--creme);
+}
+@media (min-width: 380px) { .bio__titulo { font-size: 31px; } }
+@media (min-width: 480px) { .bio__titulo { font-size: 36px; } .bio__logo { width: 186px; } }
+
+.bio__subtitulo {
+  font-family: var(--fonte-corpo);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.55;
+  margin: 0;
+  opacity: .88;
+  max-width: 36ch;
+  margin-inline: auto;
+}
+
+/* ── Portas de saída ── */
+.bio__portas {
+  display: grid;
+  gap: 10px;
+  margin: 28px 0 0;
+}
+
+.bio__porta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 62px;
+  padding: 13px 18px;
+  border-radius: var(--radius);
+  background: var(--areia);
+  color: var(--cafe);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.bio__porta:active { transform: scale(.985); }
+@media (hover: hover) {
+  .bio__porta:hover { background: var(--creme); border-color: var(--bronze-claro); }
+}
+
+.bio__porta--destaque {
+  background: var(--bronze);
+  color: var(--creme);
+}
+@media (hover: hover) {
+  .bio__porta--destaque:hover { background: var(--bronze-claro); border-color: transparent; }
+}
+
+.bio__icone {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+}
+.bio__icone svg { width: 22px; height: 22px; display: block; }
+
+.bio__porta-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  min-width: 0;
+}
+.bio__porta-titulo { font-family: var(--fonte-corpo); font-size: 15px; font-weight: 500; letter-spacing: .02em; }
+.bio__porta-apoio  { font-family: var(--fonte-corpo); font-size: 12px; opacity: .65; }
+.bio__porta--destaque .bio__porta-apoio { opacity: .82; }
+
+.bio__seta { margin-left: auto; flex: 0 0 auto; opacity: .38; font-size: 20px; line-height: 1; }
+.bio__porta--destaque .bio__seta { opacity: .65; color: var(--creme); }
+
+/* ── Formulário ── */
+.bio__form {
+  margin-top: 32px;
+  background: var(--creme);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  box-shadow: 0 16px 48px rgba(33,24,16,.38);
+}
+.bio__form-titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--cafe);
+  margin: 0 0 4px;
+}
+.bio__form-apoio {
+  font-family: var(--fonte-corpo);
+  font-size: 13px;
+  color: var(--cafe);
+  opacity: .68;
+  margin: 0 0 20px;
+}
+
+/* Campos */
+.campo { margin-bottom: 14px; text-align: left; }
+
+.campo label {
+  display: block;
+  font-family: var(--fonte-corpo);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--bronze-escuro);
+  margin-bottom: 6px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  font-family: var(--fonte-corpo);
+  font-size: 16px;
+  color: var(--cafe);
+  background: #fff;
+  border: 1px solid rgba(127,96,56,.3);
+  border-radius: 8px;
+  padding: 11px 14px;
+  min-height: 48px;
+  box-sizing: border-box;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.campo select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237F6038' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: none;
+  border-color: var(--bronze);
+  box-shadow: 0 0 0 3px rgba(127,96,56,.12);
+}
+
+.campo input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+.campo input[type="number"]::-webkit-outer-spin-button,
+.campo input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.campos-duplos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: end;
+}
+@media (max-width: 340px) { .campos-duplos { grid-template-columns: 1fr; } }
+
+/* Honeypot */
+.honeypot {
+  position: absolute; left: -9999px; width: 1px; height: 1px;
+  opacity: 0; pointer-events: none; font-family: inherit;
+}
+
+/* Mensagem de erro */
+.formulario__msg {
+  display: none;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #FDECEC;
+  border: 1px solid #F3C4C4;
+  color: #9B2C2C;
+  font-size: 13px;
+  font-family: var(--fonte-corpo);
+}
+
+/* Botão enviar */
+.bio-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  border-radius: 999px;
+  font-family: var(--fonte-corpo);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  background: var(--bronze);
+  color: var(--creme);
+  margin-top: 8px;
+  transition: background .2s ease, transform .15s ease;
+}
+.bio-btn:hover { background: var(--bronze-escuro); }
+.bio-btn:active { transform: scale(.99); }
+.bio-btn[disabled] { opacity: .7; cursor: progress; }
+.bio-btn .btn-loading { display: none; }
+
+/* Política */
+.bio__form-privacy {
+  font-family: var(--fonte-corpo);
+  font-size: 11px;
+  color: var(--cafe);
+  opacity: .5;
+  text-align: center;
+  margin-top: 14px;
+}
+.bio__form-privacy a { color: inherit; text-decoration: underline; }
+
+/* ── Sucesso ── */
+.bio__form-sucesso {
+  display: none;
+  margin-top: 32px;
+  background: var(--creme);
+  border-radius: var(--radius);
+  padding: 40px 24px;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(33,24,16,.38);
+}
+.bio__form-sucesso.active { display: block; }
+.bio__form-sucesso svg {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 14px;
+  color: var(--bronze);
+  stroke-width: 1.5;
+}
+.bio__form-sucesso h3 {
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--cafe);
+  margin: 0 0 10px;
+}
+.bio__form-sucesso p {
+  font-family: var(--fonte-corpo);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  opacity: .7;
+}
+
+/* ── Rodapé ── */
+.bio__rodape {
+  margin-top: 32px;
+  text-align: center;
+  color: var(--creme);
+  font-family: var(--fonte-corpo);
+  font-size: 11px;
+  line-height: 1.7;
+  opacity: .4;
+}
+.bio__rodape a { color: inherit; }
+
+/* ── Flatpickr na paleta da marca ── */
+.flatpickr-calendar { font-family: var(--fonte-corpo); border-radius: 12px; box-shadow: 0 12px 40px rgba(33,24,16,.2); }
+.flatpickr-months,
+.flatpickr-weekdays,
+.flatpickr-weekdaycontainer { background: var(--cafe); }
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month,
+.flatpickr-weekday { color: var(--creme); fill: var(--creme); }
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg { fill: var(--creme); }
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover { background: var(--bronze); border-color: var(--bronze); color: #fff; }
+.flatpickr-day:hover { background: var(--areia); border-color: var(--areia); }
+.flatpickr-day.today { border-color: var(--bronze-claro); }
