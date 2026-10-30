@@ -4,6 +4,7 @@
 import html from '../home/index.html?raw';
 import config from '../../config.json';
 import WhatsAppWidget from '../components/ui/WhatsAppWidget.astro';
+import { tipoEventoOptions } from '../scripts/lead-payload';
 
 const gtmId = config.tracking?.gtm_id || '';
 const gtm = config.tracking?.enabled !== false && gtmId;
@@ -15,9 +16,18 @@ const gtmBody = gtm
   ? `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`
   : '';
 
+// Mesmos tipos de evento da página /bio; os corporativos abrem o campo "Empresa"
+const corporativos = [
+  'Confraternizacao corporativa', 'Corporativo', 'Feiras e Exposicoes', 'Masterclass e Palestras',
+  'Mentorias e Treinamentos', 'Offsite corporativo', 'Reunioes de Networking', 'Workshops, Conferencias e Seminarios',
+];
+const tipos = tipoEventoOptions.map((o) => `<option value="${o.value}">${o.label}</option>`).join('');
+
 const page = html
   .replace('<!--GTM_HEAD-->', gtmHead)
   .replace('<!--GTM_BODY-->', gtmBody)
+  .replace('__TIPOS__', tipos)
+  .replace('__CORPORATIVOS__', corporativos.join('|'))
   .replace('__WEBHOOK__', config.forms['lead-form'].webhooks[0]);
 
 const head = page.match(/<head>([\s\S]*?)<\/head>/)![1];

@@ -17,6 +17,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/dark.min.css">
 <style>/* Maison Joá · página única editorial. A linha da Pedra da Gávea conduz a navegação: abre a foto no topo, recorta o Sobre e desenha o Contato. */
 :root{
   --cafe:#211810; --cafe-fundo:#1A130C; --marrom:#3A2A1A; --texto-suave:#6E5A44;
@@ -290,7 +292,9 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,s
 .campo textarea{min-height:96px;resize:vertical}
 .campo select{cursor:pointer;background-image:linear-gradient(45deg, transparent 50%, var(--bronze-claro) 50%),linear-gradient(135deg, var(--bronze-claro) 50%, transparent 50%);background-position:calc(100% - 12px) 62%, calc(100% - 6px) 62%;background-size:6px 6px;background-repeat:no-repeat;padding-right:28px}
 .campo select option{color:var(--marrom);background:var(--creme)}
-.campo input[type=date]{color-scheme:dark}
+.campo-empresa[hidden]{display:none}
+.campo-data input{cursor:pointer}
+.flatpickr-calendar{font-family:var(--fonte-texto)}
 .campo label{position:absolute;left:0;top:28px;font-weight:400;font-size:16px;color:rgba(230,220,205,.7);pointer-events:none;transform-origin:left top;transition:transform .25s ease, color .25s ease, letter-spacing .25s ease}
 .campo input:focus,.campo select:focus,.campo textarea:focus{outline:none;border-bottom-color:var(--bronze-claro)}
 .campo input:focus + label,.campo input:not(:placeholder-shown) + label,.campo textarea:focus + label,.campo textarea:not(:placeholder-shown) + label,.campo-select label,.campo-data label{transform:translateY(-22px) scale(.72);color:var(--bronze-claro);letter-spacing:.14em;text-transform:uppercase;font-weight:500}
@@ -598,8 +602,9 @@ else if(!sessionStorage.getItem('dmove_tracking')){var c=ck('dmove_utm'),o=t;if(
 <div class="campo campo-largo"><input id="nome" name="nome" type="text" autocomplete="name" placeholder=" " required><label for="nome">Nome</label></div>
 <div class="campo"><input id="telefone" name="telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder=" " required><label for="telefone">Telefone / WhatsApp</label></div>
 <div class="campo"><input id="email" name="email" type="email" autocomplete="email" placeholder=" " required><label for="email">E-mail</label></div>
-<div class="campo campo-select"><select id="tipo_evento" name="tipo_evento" required><option value="" selected disabled></option><option value="Casamento">Casamento</option><option value="Festa de 15 anos">Festa de 15 anos</option><option value="Aniversário">Aniversário</option><option value="Evento corporativo">Evento corporativo</option><option value="Confraternização">Confraternização</option><option value="Bar e Bat Mitzvah">Bar e Bat Mitzvah</option><option value="Outro">Outro</option></select><label for="tipo_evento">Tipo de evento</label></div>
-<div class="campo campo-data"><input id="data_evento" name="data_evento" type="date" required><label for="data_evento">Data do evento</label></div>
+<div class="campo campo-select"><select id="tipo_evento" name="tipo_evento" required data-corporativos="__CORPORATIVOS__"><option value="" selected disabled></option>__TIPOS__</select><label for="tipo_evento">Tipo de evento</label></div>
+<div class="campo campo-largo campo-empresa" hidden><input id="empresa" name="empresa" type="text" autocomplete="organization" placeholder=" "><label for="empresa">Nome da empresa</label></div>
+<div class="campo campo-data"><input id="data_evento" name="data_evento" type="text" placeholder=" " autocomplete="off" required><label for="data_evento">Data do evento</label></div>
 <div class="campo campo-largo"><input id="convidados" name="convidados" type="number" min="1" inputmode="numeric" placeholder=" " required><label for="convidados">Número de convidados</label></div>
 <div class="campo campo-largo"><textarea id="detalhes_adicionais" name="detalhes_adicionais" placeholder=" "></textarea><label for="detalhes_adicionais">Detalhes do evento (opcional)</label></div>
 <button class="btn btn-cheio" type="submit">Solicite sua proposta <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -616,6 +621,8 @@ else if(!sessionStorage.getItem('dmove_tracking')){var c=ck('dmove_utm'),o=t;if(
 <div class="rodape-base"><span>© 2026 Maison Joá</span><i aria-hidden="true">·</i><a href="politica-de-privacidade">Política de Privacidade</a><i aria-hidden="true">·</i><a href="https://dmove.com.br/" target="_blank" rel="noopener">Desenvolvido por Dmove</a></div>
 </div>
 </footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/pt.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
@@ -747,6 +754,14 @@ window.MJ_PREVIA = false;
     var aviso = form.querySelector('.enviado');
     var btn = form.querySelector('button[type="submit"]');
     var iniciado = false, enviando = false;
+    if (window.flatpickr) flatpickr(form.elements.data_evento, { locale: 'pt', dateFormat: 'd/m/Y', minDate: 'today', disableMobile: true, allowInput: false });
+    var tipo = form.elements.tipo_evento, campoEmpresa = form.querySelector('.campo-empresa'), empresa = form.elements.empresa;
+    var corp = (tipo.getAttribute('data-corporativos') || '').split('|');
+    tipo.addEventListener('change', function () {
+      var c = corp.indexOf(tipo.value) > -1;
+      campoEmpresa.hidden = !c; empresa.required = c;
+      if (c) empresa.focus(); else empresa.value = '';
+    });
     function dl(o) { (window.dataLayer = window.dataLayer || []).push(o); }
     form.addEventListener('focusin', function () { if (!iniciado) { iniciado = true; dl({ event: 'form_start', form_id: 'lead-form' }); } });
     form.addEventListener('submit', function (e) {
@@ -754,16 +769,15 @@ window.MJ_PREVIA = false;
       if (enviando) return;
       enviando = true; btn.disabled = true; aviso.hidden = true;
       var v = function (n) { return (form.elements[n].value || '').trim(); };
-      var d = v('data_evento').split('-');
       var agora = new Date();
       var tracking = {};
       try { tracking = JSON.parse(sessionStorage.getItem('dmove_tracking') || '{}'); } catch (x) {}
       var payload = {
-        'Nome': v('nome'), 'Telefone': v('telefone'), 'E-mail': v('email'),
+        'Empresa': v('empresa'), 'Nome': v('nome'), 'Telefone': v('telefone'), 'E-mail': v('email'),
         'Tipo de evento': v('tipo_evento'),
-        'Data do evento': d.length === 3 ? d[2] + '/' + d[1] + '/' + d[0] : v('data_evento'),
+        'Data do evento': v('data_evento'),
         'Número de pessoas': v('convidados'),
-        'Detalhes adicionais': v('detalhes_adicionais'),
+        'Mensagem': v('detalhes_adicionais'),
         'Fonte': 'Landing page/home' + location.search,
         'Data': agora.toLocaleDateString('pt-BR'),
         'Horário': agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -773,7 +787,7 @@ window.MJ_PREVIA = false;
       };
       for (var k in tracking) payload[k] = tracking[k];
       fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-        .then(function (r) { if (!r.ok) throw new Error('http_' + r.status); dl(Object.assign({ event: 'form_submit', form_id: 'lead-form' }, payload)); form.reset(); aviso.textContent = 'Recebemos seu pedido. Em breve nossa equipe entrará em contato.'; aviso.hidden = false; })
+        .then(function (r) { if (!r.ok) throw new Error('http_' + r.status); dl(Object.assign({ event: 'form_submit', form_id: 'lead-form' }, payload)); form.reset(); campoEmpresa.hidden = true; empresa.required = false; aviso.textContent = 'Recebemos seu pedido. Em breve nossa equipe entrará em contato.'; aviso.hidden = false; })
         .catch(function (err) { dl({ event: 'form_error', form_id: 'lead-form', error: err.message }); aviso.textContent = 'Não foi possível enviar agora. Tente novamente ou fale conosco pelo WhatsApp.'; aviso.hidden = false; })
         .then(function () { enviando = false; btn.disabled = false; });
     });
