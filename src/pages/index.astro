@@ -21,7 +21,10 @@ const corporativos = [
   'Confraternizacao corporativa', 'Corporativo', 'Feiras e Exposicoes', 'Masterclass e Palestras',
   'Mentorias e Treinamentos', 'Offsite corporativo', 'Reunioes de Networking', 'Workshops, Conferencias e Seminarios',
 ];
-const tipos = tipoEventoOptions.map((o) => `<option value="${o.value}">${o.label}</option>`).join('');
+// "Bar e Bat Mitzvah" existe só nesta página (fica após "Aniversário debutante")
+const opcoesHome = [...tipoEventoOptions];
+opcoesHome.splice(opcoesHome.findIndex((o) => o.value === 'Aniversario debutante') + 1, 0, { value: 'Bar e Bat Mitzvah', label: 'Bar e Bat Mitzvah' });
+const tipos = opcoesHome.map((o) => `<option value="${o.value}">${o.label}</option>`).join('');
 
 const page = html
   .replace('<!--GTM_HEAD-->', gtmHead)
