@@ -1,264 +1,33 @@
 ---
-import Base from '../layouts/Base.astro';
-import Img from '../components/ui/Img.astro';
+// Home one-page da Maison Joá. O HTML fica em src/home/index.html (imagens via CDN).
+// A home anterior (hub com cards) está preservada em _index-hub.astro (prefixo "_" = não gera rota).
+import html from '../home/index.html?raw';
+import config from '../../config.json';
+import WhatsAppWidget from '../components/ui/WhatsAppWidget.astro';
 
-const CANONICAL = Astro.site ? new URL('/', Astro.site).href : undefined;
-const OG_IMAGE  = Astro.site ? new URL('/og-image.jpg', Astro.site).href : '/og-image.jpg';
+const gtmId = config.tracking?.gtm_id || '';
+const gtm = config.tracking?.enabled !== false && gtmId;
 
-const cards = [
-  {
-    slug: 'eventos-corporativos',
-    label: 'Eventos Corporativos',
-    sub: 'Confraternizações e festas de fim de ano',
-    href: '/eventos-corporativos',
-    img: 'maison-joa-corporativo/eventos/evento-12.jpg',
-    imgAlt: 'Evento noturno com teto de luzes, globos espelhados e pista de LED na Maison Joá',
-  },
-];
+const gtmHead = gtm
+  ? `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');</script>`
+  : '';
+const gtmBody = gtm
+  ? `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>`
+  : '';
+
+const page = html
+  .replace('<!--GTM_HEAD-->', gtmHead)
+  .replace('<!--GTM_BODY-->', gtmBody)
+  .replace('__WEBHOOK__', config.forms['lead-form'].webhooks[0]);
+
+const head = page.match(/<head>([\s\S]*?)<\/head>/)![1];
+const body = page.match(/<body[^>]*>([\s\S]*?)<\/body>/)![1];
 ---
-
-<Base
-  title="Maison Joá · Espaço de Eventos no Joá, Rio de Janeiro"
-  description="Espaço de eventos na Estrada do Joá com vista para a mata, cozinha autoral, DJ e painel de LED. Escolha o seu tipo de evento."
-  ogImage={OG_IMAGE}
-  canonical={CANONICAL}
->
-<Fragment slot="head">
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" />
-</Fragment>
-
-<main class="ht-main">
-
-  <div class="ht-logo">
-    <Img src="maison-joa-corporativo/marca/logo-maison-joa-creme.png" alt="Maison Joá" width={360} priority />
-  </div>
-
-  <div class="ht-body">
-    <p class="ht-eyebrow">Estrada do Joá, Rio de Janeiro</p>
-    <h1 class="ht-headline">Para qual ocasião você<br>procura um espaço?</h1>
-
-    <div class="ht-grid">
-      {cards.map((c) => (
-        <a class="ht-card" href={c.href} data-funil={c.slug}>
-          <div class="ht-card-bg">
-            <Img src={c.img} alt={c.imgAlt} width={900} />
-          </div>
-          <div class="ht-card-content">
-            <span class="ht-card-label">{c.label}</span>
-            <span class="ht-card-sub">{c.sub}</span>
-            <span class="ht-card-cta">Solicitar orçamento →</span>
-          </div>
-        </a>
-      ))}
-    </div>
-  </div>
-
-</main>
-
-<footer class="ht-footer">
-  <p>© 2026 Maison Joá · Rio de Janeiro. Direitos reservados.</p>
-  <div class="ht-by">Desenvolvido por <a href="https://dmove.com.br" target="_blank" rel="noopener noreferrer">Dmove</a></div>
-</footer>
-
-<script>
-  document.querySelectorAll<HTMLElement>('[data-funil]').forEach((el) => {
-    el.addEventListener('click', () => {
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'escolha_funil', funil: el.dataset.funil });
-    });
-  });
-</script>
-</Base>
-
-<style>
-  :root {
-    --cafe:   #211810;
-    --creme:  #F8F1E7;
-    --bronze: #7F6038;
-    --areia:  #EFE4D3;
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body:    'Jost', system-ui, sans-serif;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--cafe);
-    color: var(--creme);
-    font-family: var(--font-body);
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ── Layout principal ── */
-  .ht-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 56px 24px 48px;
-    gap: 40px;
-  }
-
-  .ht-logo img {
-    width: clamp(180px, 40vw, 300px);
-    height: auto;
-    display: block;
-  }
-
-  .ht-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 32px;
-    width: 100%;
-    max-width: 1100px;
-  }
-
-  /* ── Textos ── */
-  .ht-eyebrow {
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--bronze);
-  }
-
-  .ht-headline {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 400;
-    line-height: 1.2;
-    text-align: center;
-    color: var(--creme);
-  }
-
-  /* ── Grade de cards ── */
-  .ht-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 420px));
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-  }
-
-  /* ── Card ── */
-  .ht-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    aspect-ratio: 3 / 4;
-    border-radius: 4px;
-    overflow: hidden;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .ht-card-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-
-  .ht-card-bg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.6s ease;
-  }
-
-  .ht-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(
-      to top,
-      rgba(33, 24, 16, 0.88) 0%,
-      rgba(33, 24, 16, 0.3) 50%,
-      rgba(33, 24, 16, 0.05) 100%
-    );
-    transition: opacity 0.3s ease;
-  }
-
-  .ht-card:hover .ht-card-bg img { transform: scale(1.04); }
-  .ht-card:hover::before { opacity: 0.85; }
-
-  .ht-card-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 28px 24px;
-  }
-
-  .ht-card-label {
-    font-family: var(--font-display);
-    font-size: 1.7rem;
-    font-weight: 500;
-    color: var(--creme);
-    line-height: 1.15;
-  }
-
-  .ht-card-sub {
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    color: var(--areia);
-    letter-spacing: 0.04em;
-    opacity: 0.85;
-  }
-
-  .ht-card-cta {
-    display: inline-block;
-    margin-top: 8px;
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--bronze);
-    border-bottom: 1px solid var(--bronze);
-    padding-bottom: 2px;
-    transition: color 0.2s, border-color 0.2s;
-    width: fit-content;
-  }
-
-  .ht-card:hover .ht-card-cta {
-    color: var(--creme);
-    border-color: var(--creme);
-  }
-
-  /* ── Footer ── */
-  .ht-footer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 6px;
-    padding: 24px;
-    border-top: 1px solid rgba(127, 96, 56, 0.2);
-    font-size: 0.72rem;
-    color: rgba(248, 241, 231, 0.4);
-    font-family: var(--font-body);
-    letter-spacing: 0.04em;
-    text-align: center;
-  }
-
-  .ht-by a {
-    color: rgba(248, 241, 231, 0.5);
-    text-decoration: none;
-  }
-  .ht-by a:hover { color: var(--bronze); }
-
-  /* ── Mobile ── */
-  @media (max-width: 480px) {
-    .ht-main { padding: 40px 20px 36px; gap: 28px; }
-    .ht-grid { grid-template-columns: 1fr; }
-    .ht-card { aspect-ratio: 4 / 3; }
-  }
-</style>
+<!doctype html>
+<html lang="pt-BR">
+<head><Fragment set:html={head} /></head>
+<body>
+  <Fragment set:html={body} />
+  <WhatsAppWidget pageSource="Landing page/home" empresaCondicional={true} />
+</body>
+</html>
